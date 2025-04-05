@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     
     <!-- NuGet包信息 -->
-    <PackageId>Fast.Core</PackageId>
+    <PackageId>fly8848.Fast.Core</PackageId>
     <Version>1.0.0</Version>
     <Authors>fly8848</Authors>
     <Company>fly8848</Company>

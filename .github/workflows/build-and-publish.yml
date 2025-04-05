@@ -33,7 +33,7 @@ jobs:  # 定义工作流中的作业
       
     - name: Pack  # 第六步：打包
       if: success() && (github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')))  # 条件：前面步骤成功且是推送到master分支或标签以v开头
-      run: dotnet pack fly8848.Fast.Core/Fast.Core.csproj --no-build --configuration Release --output nupkgs  # 打包项目为NuGet包
+      run: dotnet pack Fast.Core/Fast.Core.csproj --no-build --configuration Release --output nupkgs  # 打包项目为NuGet包
       
     - name: Push to NuGet.org  # 第七步：发布到NuGet.org
       if: success() && startsWith(github.ref, 'refs/tags/v')  # 条件：前面步骤成功且是推送标签以v开头（通常表示正式发布）
