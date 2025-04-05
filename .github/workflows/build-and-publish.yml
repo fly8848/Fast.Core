@@ -1,0 +1,44 @@
+name: Build, Test and Publish  # 工作流的名称，会显示在GitHub Actions标签页中
+
+on:  # 定义触发工作流的事件
+  push:  # 当代码被推送时触发
+    branches: [ main ]  # 只有当推送到main分支时才触发
+    tags:
+      - 'v*'  # 当推送以'v'开头的标签时也触发（通常用于版本发布）
+  pull_request:  # 当创建针对main分支的PR时触发
+    branches: [ main ]
+
+jobs:  # 定义工作流中的作业
+  build:  # 作业名称为"build"
+    runs-on: ubuntu-latest  # 该作业在最新版本的Ubuntu运行器上运行
+    
+    steps:  # 定义作业中的步骤，按顺序执行
+    - uses: actions/checkout@v3  # 第一步：检出代码到运行器
+      with:
+        fetch-depth: 0 # 获取所有历史记录，用于GitVersion（版本控制工具）
+        
+    - name: Setup .NET  # 第二步：设置.NET环境
+      uses: actions/setup-dotnet@v3  # 使用官方的.NET设置动作
+      with:
+        dotnet-version: 8.0.x  # 安装.NET 8.0版本
+        
+    - name: Restore dependencies  # 第三步：还原项目依赖
+      run: dotnet restore  # 执行dotnet restore命令
+      
+    - name: Build  # 第四步：构建项目
+      run: dotnet build --no-restore --configuration Release  # 以Release模式构建，不再重复还原依赖
+      
+    - name: Test  # 第五步：运行测试
+      run: dotnet test --no-build --configuration Release --verbosity normal  # 运行测试，不再重新构建
+      
+    - name: Pack  # 第六步：打包
+      if: success() && (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))  # 条件：前面步骤成功且是推送到main分支或标签以v开头
+      run: dotnet pack Fast.Core/Fast.Core.csproj --no-build --configuration Release --output nupkgs  # 打包项目为NuGet包
+      
+    - name: Push to NuGet.org  # 第七步：发布到NuGet.org
+      if: success() && startsWith(github.ref, 'refs/tags/v')  # 条件：前面步骤成功且是推送标签以v开头（通常表示正式发布）
+      run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json  # 推送所有包到NuGet.org
+      
+    - name: Push to GitHub Packages  # 第八步：发布到GitHub Packages
+      if: success() && (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))  # 条件：前面步骤成功且是推送到main分支或标签以v开头
+      run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json  # 推送所有包到GitHub Packages 

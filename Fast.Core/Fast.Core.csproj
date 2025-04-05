@@ -4,10 +4,37 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- NuGet包信息 -->
+    <PackageId>Fast.Core</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>fly8848</Authors>
+    <Company>fly8848</Company>
+    <Description>一个核心包, 提供常用功能和扩展方法</Description>
+    <PackageTags>dotnet;extensions</PackageTags>
+    
+    <!-- 许可证信息 -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    
+    <!-- 项目URL信息 -->
+    <PackageProjectUrl>https://github.com/fly8848/Fast.Core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fly8848/Fast.Core.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
+    <!-- 源代码链接配置 -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    
+    <!-- XML文档 -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 
 </Project>
